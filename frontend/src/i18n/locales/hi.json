@@ -1,0 +1,97 @@
+{
+  "header": {
+    "title": "मेडिकल डैशबोर्ड",
+    "brand": "फार्मा केयर",
+    "welcome": "स्वागत है, डॉ. {{name}}",
+    "viewHistory": "इतिहास देखें",
+    "logout": "लॉगआउट"
+  },
+  "patientForm": {
+    "title": "मरीज की जानकारी",
+    "subtitle": "नीचे मरीज की जानकारी दर्ज करें",
+    "patientName": "मरीज का नाम",
+    "patientNamePlaceholder": "मरीज का पूरा नाम दर्ज करें",
+    "medicalCondition": "चिकित्सा स्थिति",
+    "medicalConditionPlaceholder": "चिकित्सा स्थिति दर्ज करें",
+    "age": "उम्र",
+    "agePlaceholder": "वर्ष",
+    "weight": "वजन (किलो)",
+    "weightPlaceholder": "किलो",
+    "gender": "लिंग",
+    "selectGender": "लिंग चुनें",
+    "male": "पुरुष",
+    "female": "महिला",
+    "other": "अन्य",
+    "bloodPressure": "रक्तचाप",
+    "bloodPressurePlaceholder": "जैसे, 120/80 mmHg",
+    "additionalInstructions": "अतिरिक्त निर्देश",
+    "additionalInstructionsPlaceholder": "जैसे, भरपूर पानी पिएं, मसालेदार खाना न लें...",
+    "nextVisitDate": "अगली मुलाकात की तारीख",
+    "savePrescription": "प्रिस्क्रिप्शन सेव करें"
+  },
+  "medicineSelector": {
+    "title": "दवा चयन",
+    "searchPlaceholder": "श्रेणी खोजें (जैसे, बुखार, हृदय)...",
+    "backToCategories": "← श्रेणियों पर वापस",
+    "selectedMedicines": "चुनी गई दवाएं ({{count}})",
+    "clearAll": "सभी साफ करें",
+    "noMedicinesSelected": "अभी तक कोई दवा नहीं चुनी गई।",
+    "noCategoryFound": "\"{{search}}\" के लिए कोई श्रेणी नहीं मिली"
+  },
+  "doctorProfile": {
+    "title": "डॉक्टर प्रोफाइल",
+    "changePhoto": "फोटो बदलें"
+  },
+  "prescription": {
+    "title": "चिकित्सा प्रिस्क्रिप्शन",
+    "patientName": "मरीज का नाम:",
+    "age": "उम्र:",
+    "gender": "लिंग:",
+    "weight": "वजन:",
+    "bloodPressure": "रक्तचाप:",
+    "date": "दिनांक:",
+    "medicalCondition": "चिकित्सा स्थिति:",
+    "prescribedMedicines": "निर्धारित दवाएं:",
+    "serialNo": "क्र.सं.",
+    "medicineName": "दवा का नाम",
+    "dosageInstructions": "खुराक निर्देश",
+    "additionalInstructions": "अतिरिक्त निर्देश:",
+    "nextVisit": "अगली मुलाकात:",
+    "asAdvised": "सलाह के अनुसार",
+    "speciality": "विशेषज्ञता:",
+    "regNo": "रजि. नं:",
+    "noMedicinesPrescribed": "कोई दवा निर्धारित नहीं।",
+    "defaultInstructions": "निर्धारित दवाएं लें। भरपूर पानी पिएं। लक्षण बने रहने पर डॉक्टर से मिलें।"
+  },
+  "buttons": {
+    "saveAsPDF": "PDF के रूप में सेव करें",
+    "shareViaWhatsApp": "व्हाट्सएप से साझा करें",
+    "cancel": "रद्द करें",
+    "add": "जोड़ें",
+    "addMedicine": "दवा जोड़ें"
+  },
+  "modal": {
+    "addMedicineDosage": "दवा की खुराक जोड़ें",
+    "enterDosageFor": "इसके लिए खुराक निर्देश दर्ज करें: {{name}}",
+    "dosagePlaceholder": "जैसे, दिन में दो बार खाना खाने के बाद 1 गोली",
+    "pleaseEnterDosage": "कृपया खुराक दर्ज करें।"
+  },
+  "alerts": {
+    "fillDetailsAndMedicines": "कृपया मरीज की जानकारी भरें और कम से कम एक दवा जोड़ें।",
+    "prescriptionSaved": "प्रिस्क्रिप्शन सफलतापूर्वक सेव हो गया!",
+    "failedToSave": "प्रिस्क्रिप्शन सेव करने में असफल।"
+  },
+  "loading": {
+    "loadingDashboard": "डॉक्टर डैशबोर्ड लोड हो रहा है..."
+  },
+  "whatsapp": {
+    "prescriptionTitle": "🏥 *प्रिस्क्रिप्शन* 🏥",
+    "patient": "👤 *मरीज:*",
+    "date": "📅 *दिनांक:*",
+    "doctor": "🩺 *डॉक्टर:*",
+    "medicines": "💊 *दवाएं:*",
+    "instructions": "📝 *निर्देश:*",
+    "nextVisit": "⏰ *अगली मुलाकात:*",
+    "takeAsPrescribed": "निर्धारित अनुसार लें"
+  }
+}

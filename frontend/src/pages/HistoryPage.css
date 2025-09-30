@@ -1,0 +1,16 @@
+/* frontend/src/pages/HistoryPage.css */
+.history-page { max-width: 1200px; margin: 40px auto; padding: 30px; background-color: #fff; border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,0.08); }
+.history-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #f0f0f0; padding-bottom: 20px; margin-bottom: 30px; }
+.history-header h1 { margin: 0; color: #2196F3; }
+.back-btn { text-decoration: none; background-color: #f0f2f5; color: #333; padding: 10px 20px; border-radius: 20px; font-weight: 600; transition: all 0.2s; }
+.back-btn:hover { background-color: #e2e6ea; }
+.history-table { width: 100%; border-collapse: collapse; }
+.history-table th, .history-table td { padding: 15px; border-bottom: 1px solid #ddd; text-align: left; }
+.history-table thead { background-color: #f8f9fa; }
+.history-table th { font-weight: 600; color: #555; }
+.history-table tbody tr:hover { background-color: #f1f8ff; }
+.no-history { text-align: center; font-size: 18px; color: #888; padding: 50px; }
+
+/* PrescriptionPage Header mein History link ke liye style */
+.history-link { color: white; text-decoration: none; font-weight: 500; background-color: rgba(255,255,255,0.2); padding: 8px 15px; border-radius: 20px; transition: background-color 0.2s; }
+.history-link:hover { background-color: rgba(255,255,255,0.3); }

@@ -1,0 +1,52 @@
+.profile-page { max-width: 800px; margin: 40px auto; padding: 30px; background-color: #fff; border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,0.08); }
+.profile-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #f0f0f0; padding-bottom: 20px; margin-bottom: 30px; }
+.profile-header h1 { margin: 0; color: #2196F3; }
+.profile-form .form-group { margin-bottom: 20px; }
+.profile-form label { display: block; margin-bottom: 8px; font-weight: 600; font-size: 14px; color: #333; }
+.profile-form input { width: 100%; padding: 12px; border-radius: 6px; border: 1px solid #ddd; font-size: 16px; box-sizing: border-box; }
+.profile-form input:disabled { background-color: #f8f9fa; cursor: not-allowed; }
+.update-btn { background-color: #4CAF50; color: white; padding: 15px 25px; border: none; border-radius: 8px; cursor: pointer; font-size: 16px; font-weight: bold; width: 100%; }
+.update-btn:hover { background-color: #45a049; }
+/* ... baaki saara CSS ... */
+
+/* Favorites Section Styles */
+.favorites-section {
+    margin-bottom: 25px;
+    padding: 20px;
+    background-color: #fff3cd;
+    border: 1px solid #ffeeba;
+    border-radius: 15px;
+}
+.favorites-section h4 {
+    margin: 0 0 15px 0;
+    color: #856404;
+    text-align: center;
+}
+.favorites-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+}
+.fav-med-btn {
+    background-color: #fff;
+    border: 1px solid #856404;
+    color: #856404;
+    padding: 8px 15px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.2s;
+}
+.fav-med-btn:hover {
+    background-color: #856404;
+    color: white;
+}
+.fav-med-btn.selected {
+    background-color: #6c757d;
+    color: white;
+    border-color: #6c757d;
+    cursor: not-allowed;
+}
+
+/* ... baaki saara CSS ... */

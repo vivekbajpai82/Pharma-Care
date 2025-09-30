@@ -1,0 +1,97 @@
+{
+  "header": {
+    "title": "Medical Dashboard",
+    "brand": "Pharma Care",
+    "welcome": "Welcome, Dr. {{name}}",
+    "viewHistory": "View History",
+    "logout": "Logout"
+  },
+  "patientForm": {
+    "title": "Patient Information",
+    "subtitle": "Enter patient details below",
+    "patientName": "Patient Name",
+    "patientNamePlaceholder": "Enter patient full name",
+    "medicalCondition": "Medical Condition",
+    "medicalConditionPlaceholder": "Enter medical condition",
+    "age": "Age",
+    "agePlaceholder": "Years",
+    "weight": "Weight (kg)",
+    "weightPlaceholder": "kg",
+    "gender": "Gender",
+    "selectGender": "Select Gender",
+    "male": "Male",
+    "female": "Female",
+    "other": "Other",
+    "bloodPressure": "Blood Pressure",
+    "bloodPressurePlaceholder": "e.g., 120/80 mmHg",
+    "additionalInstructions": "Additional Instructions",
+    "additionalInstructionsPlaceholder": "e.g., Drink plenty of water, avoid spicy food...",
+    "nextVisitDate": "Next Visit Date",
+    "savePrescription": "Save Prescription"
+  },
+  "medicineSelector": {
+    "title": "Medicine Selection",
+    "searchPlaceholder": "Search category (e.g., Fever, Cardio)...",
+    "backToCategories": "← Back to Categories",
+    "selectedMedicines": "Selected Medicines ({{count}})",
+    "clearAll": "Clear All",
+    "noMedicinesSelected": "No medicines selected yet.",
+    "noCategoryFound": "No category found for \"{{search}}\""
+  },
+  "doctorProfile": {
+    "title": "Doctor Profile",
+    "changePhoto": "Change Photo"
+  },
+  "prescription": {
+    "title": "MEDICAL PRESCRIPTION",
+    "patientName": "Patient Name:",
+    "age": "Age:",
+    "gender": "Gender:",
+    "weight": "Weight:",
+    "bloodPressure": "Blood Pressure:",
+    "date": "Date:",
+    "medicalCondition": "Medical Condition:",
+    "prescribedMedicines": "PRESCRIBED MEDICINES:",
+    "serialNo": "S.No.",
+    "medicineName": "Medicine Name",
+    "dosageInstructions": "Dosage Instructions",
+    "additionalInstructions": "ADDITIONAL INSTRUCTIONS:",
+    "nextVisit": "Next Visit:",
+    "asAdvised": "As advised",
+    "speciality": "Speciality:",
+    "regNo": "Reg. No:",
+    "noMedicinesPrescribed": "No medicines prescribed.",
+    "defaultInstructions": "Take medicines as prescribed. Drink plenty of water. Follow up if symptoms persist."
+  },
+  "buttons": {
+    "saveAsPDF": "Save as PDF",
+    "shareViaWhatsApp": "Share via WhatsApp",
+    "cancel": "Cancel",
+    "add": "Add",
+    "addMedicine": "Add Medicine"
+  },
+  "modal": {
+    "addMedicineDosage": "Add Medicine Dosage",
+    "enterDosageFor": "Enter dosage instructions for: {{name}}",
+    "dosagePlaceholder": "e.g., 1 tablet twice daily after meals",
+    "pleaseEnterDosage": "Please enter a dosage."
+  },
+  "alerts": {
+    "fillDetailsAndMedicines": "Please fill patient details and add at least one medicine.",
+    "prescriptionSaved": "Prescription saved successfully!",
+    "failedToSave": "Failed to save prescription."
+  },
+  "loading": {
+    "loadingDashboard": "Loading Doctor Dashboard..."
+  },
+  "whatsapp": {
+    "prescriptionTitle": "🏥 *PRESCRIPTION* 🏥",
+    "patient": "👤 *Patient:*",
+    "date": "📅 *Date:*",
+    "doctor": "🩺 *Doctor:*",
+    "medicines": "💊 *Medicines:*",
+    "instructions": "📝 *Instructions:*",
+    "nextVisit": "⏰ *Next Visit:*",
+    "takeAsPrescribed": "Take as prescribed"
+  }
+}
