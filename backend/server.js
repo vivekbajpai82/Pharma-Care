@@ -1,10 +1,8 @@
 const express = require('express');
 const cors = require('cors');
-const path = require('path');
 const connectDB = require('./config/db');
 require('dotenv').config();
 
-// Database connect
 connectDB();
 
 const app = express();
@@ -28,10 +26,16 @@ app.use((req, res, next) => {
   next();
 });
 
-// Static uploads folder
-//app.use('/uploads', express.static('uploads'));
-
 // Health check
+app.get('/', (req, res) => {
+  res.json({
+    message: 'Pharma Care Backend API is running...',
+    status: 'OK',
+    timestamp: new Date().toISOString(),
+    environment: process.env.NODE_ENV || 'development'
+  });
+});
+
 app.get('/health', (req, res) => {
   res.status(200).json({
     status: 'healthy',
@@ -44,15 +48,6 @@ app.get('/health', (req, res) => {
 app.use('/api', require('./routes/auth'));
 app.use('/api/prescriptions', require('./routes/prescriptions'));
 app.use('/api/medicines', require('./routes/medicines'));
-
-// Serve frontend build in production
-if (process.env.NODE_ENV === "production") {
-  app.use(express.static(path.join(__dirname, "../frontend/dist")));
-
-  app.get("*", (req, res) => {
-    res.sendFile(path.join(__dirname, "../frontend/dist/index.html"));
-  });
-}
 
 // 404 Handler
 app.use((req, res) => {
@@ -94,11 +89,10 @@ process.on('SIGINT', () => {
   process.exit(0);
 });
 
-// Port config
 const PORT = process.env.PORT || 5000;
 
-app.listen(PORT, "0.0.0.0", () => {
-  console.log(`✅ Server started on PORT ${PORT}`);
-  console.log(`🌍 Environment: ${process.env.NODE_ENV || 'development'}`);
-  console.log(`🔗 Frontend URL: ${process.env.FRONTEND_URL || 'http://localhost:5173'}`);
+app.listen(PORT, '0.0.0.0', () => {
+  console.log(`Server started on PORT ${PORT}`);
+  console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
+  console.log(`Frontend URL: ${process.env.FRONTEND_URL || 'http://localhost:5173'}`);
 });
