@@ -1,10 +1,21 @@
-const { Resend } = require('resend');
+const nodemailer = require('nodemailer');
 require('dotenv').config();
 
-// Initialize Resend
-const resend = new Resend(process.env.RESEND_API_KEY);
+// Create transporter
+const createTransporter = () => {
+    return nodemailer.createTransport({
+        host: 'smtp.gmail.com',
+        port: 465,
+        secure: true,
+        auth: {
+            user: process.env.EMAIL_USER,
+            pass: process.env.EMAIL_PASS
+        }
+    });
+};
 
-// Process PDF Buffer function (same as before)
+// Updated processPDFBuffer function for emailService.js
+
 const processPDFBuffer = (pdfBuffer) => {
     if (!pdfBuffer) {
         console.log('No PDF buffer provided');
@@ -34,6 +45,7 @@ const processPDFBuffer = (pdfBuffer) => {
             }
             
             console.log('Unknown PDF format, attempting to extract base64...');
+            // Try to extract base64 from any data URL
             const base64Match = pdfBuffer.match(/base64,(.+)/);
             if (base64Match) {
                 return base64Match[1];
@@ -57,10 +69,12 @@ const processPDFBuffer = (pdfBuffer) => {
 // Send password reset email
 const sendResetPasswordEmail = async (userEmail, resetToken, userName) => {
     try {
+        const transporter = createTransporter();
+        
         const resetUrl = `${process.env.FRONTEND_URL || 'http://localhost:5173'}/reset-password/${resetToken}`;
         
-        const { data, error } = await resend.emails.send({
-            from: process.env.EMAIL_FROM || 'onboarding@resend.dev',
+        const mailOptions = {
+            from: `"Pharma Care Support" <${process.env.EMAIL_USER}>`,
             to: userEmail,
             subject: 'Password Reset Request - Pharma Care',
             html: `
@@ -106,15 +120,11 @@ const sendResetPasswordEmail = async (userEmail, resetToken, userName) => {
                     </div>
                 </div>
             `
-        });
+        };
 
-        if (error) {
-            console.error('Email sending failed:', error);
-            return { success: false, error: error.message };
-        }
-
-        console.log('Email sent successfully:', data.id);
-        return { success: true, messageId: data.id };
+        const result = await transporter.sendMail(mailOptions);
+        console.log('Email sent successfully:', result.messageId);
+        return { success: true, messageId: result.messageId };
         
     } catch (error) {
         console.error('Email sending failed:', error);
@@ -125,9 +135,12 @@ const sendResetPasswordEmail = async (userEmail, resetToken, userName) => {
 // Send prescription email
 const sendPrescriptionEmail = async (recipientEmail, recipientName, prescriptionData, doctorInfo, pdfBuffer) => {
     try {
+        const transporter = createTransporter();
+        
         const { patientDetails, medicines, createdAt } = prescriptionData;
         const prescriptionDate = new Date(createdAt).toLocaleDateString('en-IN');
         
+        // Create medicines list for email
         const medicinesList = medicines.map((med, index) => 
             `<tr style="border-bottom: 1px solid #eee;">
                 <td style="padding: 8px; text-align: center;">${index + 1}</td>
@@ -137,19 +150,22 @@ const sendPrescriptionEmail = async (recipientEmail, recipientName, prescription
             </tr>`
         ).join('');
 
+        // Process PDF buffer safely
         const processedPDFBuffer = processPDFBuffer(pdfBuffer);
 
-        const emailPayload = {
-            from: process.env.EMAIL_FROM || 'onboarding@resend.dev',
+        const mailOptions = {
+            from: `"Pharma Care - Dr. ${doctorInfo.name}" <${process.env.EMAIL_USER}>`,
             to: recipientEmail,
             subject: `Medical Prescription for ${patientDetails.name} - Pharma Care`,
             html: `
                 <div style="font-family: Arial, sans-serif; max-width: 700px; margin: 0 auto; padding: 20px; background-color: #f9f9f9;">
+                    <!-- Header -->
                     <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 30px; border-radius: 10px; color: white; text-align: center;">
                         <h1 style="margin: 0; font-size: 28px;">🏥 Pharma Care</h1>
                         <p style="margin: 10px 0 0 0; opacity: 0.9;">Digital Medical Prescription</p>
                     </div>
                     
+                    <!-- Main Content -->
                     <div style="background: white; padding: 40px; border-radius: 10px; margin-top: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
                         <h2 style="color: #333; margin: 0 0 20px 0; text-align: center;">Medical Prescription</h2>
                         
@@ -158,10 +174,11 @@ const sendPrescriptionEmail = async (recipientEmail, recipientName, prescription
                         </p>
                         
                         <p style="color: #666; line-height: 1.6; margin: 0 0 20px 0;">
-                            Please find your medical prescription as prescribed by 
+                            Please find your medical prescription </strong> as prescribed by 
                             <strong>Dr. ${doctorInfo.name}</strong> (${doctorInfo.speciality}) on <strong>${prescriptionDate}</strong>.
                         </p>
 
+                        <!-- Patient Information -->
                         <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin: 20px 0;">
                             <h3 style="color: #333; margin: 0 0 15px 0; font-size: 16px;">Patient Information</h3>
                             <table style="width: 100%; border-collapse: collapse;">
@@ -190,6 +207,7 @@ const sendPrescriptionEmail = async (recipientEmail, recipientName, prescription
                             </table>
                         </div>
 
+                        <!-- Prescribed Medicines -->
                         <div style="margin: 30px 0;">
                             <h3 style="color: #333; margin: 0 0 15px 0; font-size: 16px;">Prescribed Medicines (${medicines.length})</h3>
                             <table style="width: 100%; border-collapse: collapse; border: 1px solid #ddd; border-radius: 8px; overflow: hidden;">
@@ -208,18 +226,21 @@ const sendPrescriptionEmail = async (recipientEmail, recipientName, prescription
                         </div>
 
                         ${patientDetails.additionalInstructions ? `
+                        <!-- Additional Instructions -->
                         <div style="background: #fff3cd; border: 1px solid #ffeaa7; padding: 15px; border-radius: 8px; margin: 20px 0;">
                             <h4 style="color: #856404; margin: 0 0 10px 0; font-size: 14px;">Additional Instructions:</h4>
                             <p style="color: #856404; margin: 0; line-height: 1.4;">${patientDetails.additionalInstructions}</p>
                         </div>` : ''}
 
                         ${patientDetails.nextVisit ? `
+                        <!-- Next Visit -->
                         <div style="background: #d1ecf1; border: 1px solid #bee5eb; padding: 15px; border-radius: 8px; margin: 20px 0;">
                             <p style="color: #0c5460; margin: 0; font-weight: 500;">
                                 <strong>Next Visit:</strong> ${new Date(patientDetails.nextVisit).toLocaleDateString('en-IN')}
                             </p>
                         </div>` : ''}
 
+                        <!-- Doctor Information -->
                         <div style="border-top: 2px solid #eee; padding-top: 20px; margin-top: 30px; text-align: right;">
                             <p style="margin: 0; color: #333; font-weight: 500;">Dr. ${doctorInfo.name}</p>
                             <p style="margin: 5px 0 0 0; color: #666; font-size: 14px;">${doctorInfo.speciality}</p>
@@ -239,6 +260,7 @@ const sendPrescriptionEmail = async (recipientEmail, recipientName, prescription
                         </div>`}
                     </div>
                     
+                    <!-- Footer -->
                     <div style="text-align: center; margin-top: 20px; color: #999; font-size: 14px;">
                         <p style="margin: 0 0 10px 0;">This is an automated message from Pharma Care digital prescription system.</p>
                         <p style="margin: 0 0 10px 0;">Please consult your doctor if you have any questions about this prescription.</p>
@@ -247,26 +269,18 @@ const sendPrescriptionEmail = async (recipientEmail, recipientName, prescription
                         </p>
                     </div>
                 </div>
-            `
+            `,
+            attachments: processedPDFBuffer ? [{
+                filename: `Prescription_${patientDetails.name}_${prescriptionDate.replace(/\//g, '-')}.pdf`,
+                content: processedPDFBuffer,
+                contentType: 'application/pdf',
+                encoding: 'base64'
+            }] : []
         };
 
-        // Add attachment if PDF is available
-        if (processedPDFBuffer) {
-            emailPayload.attachments = [{
-                filename: `Prescription_${patientDetails.name}_${prescriptionDate.replace(/\//g, '-')}.pdf`,
-                content: processedPDFBuffer
-            }];
-        }
-
-        const { data, error } = await resend.emails.send(emailPayload);
-
-        if (error) {
-            console.error('Prescription email sending failed:', error);
-            return { success: false, error: error.message };
-        }
-
-        console.log('Prescription email sent successfully:', data.id);
-        return { success: true, messageId: data.id };
+        const result = await transporter.sendMail(mailOptions);
+        console.log('Prescription email sent successfully:', result.messageId);
+        return { success: true, messageId: result.messageId };
         
     } catch (error) {
         console.error('Prescription email sending failed:', error);
@@ -274,20 +288,28 @@ const sendPrescriptionEmail = async (recipientEmail, recipientName, prescription
     }
 };
 
-// Send welcome email
+
+
+
+
+// Send welcome email to new doctors
 const sendWelcomeEmail = async (userEmail, userName) => {
     try {
-        const { data, error } = await resend.emails.send({
-            from: process.env.EMAIL_FROM || 'onboarding@resend.dev',
+        const transporter = createTransporter();
+        
+        const mailOptions = {
+            from: `"Pharma Care Team" <${process.env.EMAIL_USER}>`,
             to: userEmail,
             subject: 'Welcome to Pharma Care - Your Digital Healthcare Partner!',
             html: `
                 <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #f9f9f9;">
+                    <!-- Header -->
                     <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 40px 30px; border-radius: 15px; color: white; text-align: center; box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);">
                         <h1 style="margin: 0; font-size: 32px; font-weight: bold;">🏥 Pharma Care</h1>
                         <p style="margin: 15px 0 0 0; opacity: 0.9; font-size: 18px;">Digital Healthcare Platform</p>
                     </div>
                     
+                    <!-- Main Content -->
                     <div style="background: white; padding: 40px; border-radius: 15px; margin-top: 25px; box-shadow: 0 8px 30px rgba(0,0,0,0.1);">
                         <h2 style="color: #333; margin: 0 0 20px 0; font-size: 24px; text-align: center;">
                             Welcome to Pharma Care, Dr. ${userName}! 🎉
@@ -348,6 +370,7 @@ const sendWelcomeEmail = async (userEmail, userName) => {
                         </div>
                     </div>
                     
+                    <!-- Footer -->
                     <div style="text-align: center; margin-top: 25px; color: #999; font-size: 14px;">
                         <p style="margin: 0 0 10px 0;">This is an automated welcome message from Pharma Care.</p>
                         <p style="margin: 0 0 10px 0;">You're receiving this because you recently created an account with us.</p>
@@ -364,15 +387,11 @@ const sendWelcomeEmail = async (userEmail, userName) => {
                     </div>
                 </div>
             `
-        });
+        };
 
-        if (error) {
-            console.error('Welcome email sending failed:', error);
-            return { success: false, error: error.message };
-        }
-
-        console.log('Welcome email sent successfully to:', userEmail, 'Message ID:', data.id);
-        return { success: true, messageId: data.id };
+        const result = await transporter.sendMail(mailOptions);
+        console.log('Welcome email sent successfully to:', userEmail, 'Message ID:', result.messageId);
+        return { success: true, messageId: result.messageId };
         
     } catch (error) {
         console.error('Welcome email sending failed:', error);
@@ -383,11 +402,9 @@ const sendWelcomeEmail = async (userEmail, userName) => {
 // Test email connection
 const testEmailConnection = async () => {
     try {
-        if (!process.env.RESEND_API_KEY) {
-            console.error('❌ RESEND_API_KEY not found in environment variables');
-            return false;
-        }
-        console.log('✅ Email service (Resend) is configured and ready');
+        const transporter = createTransporter();
+        await transporter.verify();
+        console.log('✅ Email service is ready');
         return true;
     } catch (error) {
         console.error('❌ Email service error:', error);
