@@ -1,4 +1,4 @@
-# 🏥 Pharma Care - Digital Prescription Management System
+# 🏥 Pharma Care - Digital Prescription 
 
 A comprehensive web application for doctors to create, manage, and share digital prescriptions with patients. Built with modern web technologies for seamless prescription generation and distribution.
 
@@ -40,7 +40,6 @@ A comprehensive web application for doctors to create, manage, and share digital
 ### Frontend
 - **React.js** - UI library
 - **Vite** - Build tool
-- **Tailwind CSS** - Styling
 - **React Router** - Navigation
 - **Axios** - HTTP client
 - **jsPDF** - PDF generation
