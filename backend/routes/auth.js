@@ -9,7 +9,6 @@ const DoctorStats = require('../models/DoctorStats');
 const User = require('../models/User');
 const auth = require('../middleware/auth');
 const upload = require('../middleware/upload');
-//const { sendResetPasswordEmail } = require('../utils/emailService');
 const { sendResetPasswordEmail, sendWelcomeEmail } = require('../utils/emailService');
 
 
@@ -62,8 +61,13 @@ router.post('/register', upload.single('profileImage'), async (req, res) => {
         });
         await doctorStats.save();
 
-        // Send welcome email
-        await sendWelcomeEmail(email, name);
+        // Send welcome email (optional - won't block registration if fails)
+        try {
+            await sendWelcomeEmail(email, name);
+            console.log('Welcome email sent successfully to:', email);
+        } catch (emailError) {
+            console.log('Welcome email failed but registration successful:', emailError.message);
+        }
 
         res.status(201).json({ msg: 'User registered successfully' });
 
@@ -201,22 +205,26 @@ router.post('/forgot-password', async (req, res) => {
         // Save user with reset token (skip validation to avoid password required error)
         await user.save({ validateBeforeSave: false });
 
-        // Send email with reset token
-        const emailResult = await sendResetPasswordEmail(email, resetToken, user.name);
+        // Try to send email with reset token
+        try {
+            const emailResult = await sendResetPasswordEmail(email, resetToken, user.name);
 
-        if (emailResult.success) {
-            res.status(200).json({ 
-                success: true,
-                msg: 'Password reset email sent successfully. Please check your inbox.' 
-            });
-        } else {
-            // If email fails, clear the reset token fields
-            user.resetPasswordToken = undefined;
-            user.resetPasswordExpire = undefined;
-            await user.save({ validateBeforeSave: false });
+            if (emailResult.success) {
+                return res.status(200).json({ 
+                    success: true,
+                    msg: 'Password reset email sent successfully. Please check your inbox.' 
+                });
+            } else {
+                throw new Error('Email service returned error');
+            }
+        } catch (emailError) {
+            console.error('Password reset email failed:', emailError.message);
             
-            return res.status(500).json({ 
-                msg: 'Email could not be sent. Please try again later.' 
+            // Email failed but token is generated
+            return res.status(200).json({ 
+                success: false,
+                msg: 'Unable to send reset email at the moment. Please contact support at +91-9335373004 or try again later.',
+                note: 'Your reset token has been generated but email delivery is temporarily unavailable.'
             });
         }
         

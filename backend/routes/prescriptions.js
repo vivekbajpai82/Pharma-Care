@@ -4,7 +4,7 @@ const auth = require('../middleware/auth');
 const Prescription = require('../models/Prescription');
 const User = require('../models/User');
 const DoctorStats = require('../models/DoctorStats');
-const { sendPrescriptionEmail } = require('../utils/emailService'); // NEW IMPORT
+const { sendPrescriptionEmail } = require('../utils/emailService');
 
 // @route   POST /api/prescriptions
 // @desc    Save a new prescription and update doctor stats
@@ -121,9 +121,8 @@ router.get('/stats', auth, async (req, res) => {
     }
 });
 
-// NEW ROUTE: Send prescription via email
 // @route   POST /api/prescriptions/send-email
-// @desc    Send prescription via email with PDF attachment
+// @desc    Send prescription via email with PDF attachment (optional feature)
 router.post('/send-email', auth, async (req, res) => {
     try {
         const { 
@@ -171,9 +170,7 @@ router.post('/send-email', auth, async (req, res) => {
         let pdfBufferConverted = null;
         if (pdfBuffer) {
             try {
-                // If pdfBuffer is base64 string, convert to buffer
                 if (typeof pdfBuffer === 'string') {
-                    // Remove data:application/pdf;base64, prefix if present
                     const base64Data = pdfBuffer.replace(/^data:application\/pdf;base64,/, '');
                     pdfBufferConverted = Buffer.from(base64Data, 'base64');
                 } else {
@@ -181,30 +178,45 @@ router.post('/send-email', auth, async (req, res) => {
                 }
             } catch (pdfError) {
                 console.error('PDF conversion error:', pdfError);
-                // Continue without PDF attachment
             }
         }
 
-        // Send email
-        const emailResult = await sendPrescriptionEmail(
-            recipientEmail,
-            recipientName,
-            prescriptionData,
-            doctorInfo,
-            pdfBufferConverted
-        );
+        // Try to send email - optional feature, won't block prescription functionality
+        let emailSent = false;
+        let emailError = null;
+        
+        try {
+            const emailResult = await sendPrescriptionEmail(
+                recipientEmail,
+                recipientName,
+                prescriptionData,
+                doctorInfo,
+                pdfBufferConverted
+            );
 
-        if (emailResult.success) {
-            res.json({
+            emailSent = emailResult.success;
+            
+            if (emailSent) {
+                console.log('Prescription email sent successfully to:', recipientEmail);
+                return res.json({
+                    success: true,
+                    message: `Prescription sent successfully to ${recipientEmail}`,
+                    messageId: emailResult.messageId,
+                    emailSent: true
+                });
+            } else {
+                emailError = emailResult.error;
+                throw new Error(emailResult.error || 'Email service returned error');
+            }
+        } catch (emailSendError) {
+            console.error('Prescription email failed:', emailSendError.message);
+            
+            // Email failed but don't return error - inform user gracefully
+            return res.json({
                 success: true,
-                message: `Prescription sent successfully to ${recipientEmail}`,
-                messageId: emailResult.messageId
-            });
-        } else {
-            res.status(500).json({
-                success: false,
-                message: 'Failed to send email',
-                error: emailResult.error
+                message: 'Prescription data processed. Email delivery is temporarily unavailable - please download PDF and share manually.',
+                emailSent: false,
+                note: 'Email service is currently unavailable. Please use the download option or share via WhatsApp.'
             });
         }
 
@@ -212,7 +224,7 @@ router.post('/send-email', auth, async (req, res) => {
         console.error('Send email error:', error);
         res.status(500).json({
             success: false,
-            message: 'Server error occurred while sending email',
+            message: 'Server error occurred',
             error: error.message
         });
     }
