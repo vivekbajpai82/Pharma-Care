@@ -15,7 +15,6 @@ const { sendResetPasswordEmail, sendWelcomeEmail } = require('../utils/emailServ
 
 router.post('/register', upload.single('profileImage'), async (req, res) => {
     try {
-        // Explicitly map fields from req.body
         const name = req.body.name;
         const email = req.body.email;
         const password = req.body.password;
@@ -61,7 +60,6 @@ router.post('/register', upload.single('profileImage'), async (req, res) => {
         });
         await doctorStats.save();
 
-        // Send welcome email (optional - won't block registration if fails)
         try {
             await sendWelcomeEmail(email, name);
             console.log('Welcome email sent successfully to:', email);
@@ -76,15 +74,6 @@ router.post('/register', upload.single('profileImage'), async (req, res) => {
         res.status(500).json({ msg: 'Server Error' });
     }
 });
-
-
-
-
-
-
-
-
-
 
 // @route   POST /api/login
 // @desc    Authenticate user & get token

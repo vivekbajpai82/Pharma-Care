@@ -24,7 +24,6 @@ const UserSchema = new mongoose.Schema({
     timestamps: true
 });
 
-// Password ko save karne se pehle HASH karein
 UserSchema.pre('save', async function(next) {
     if (!this.isModified('password')) {
         return next();

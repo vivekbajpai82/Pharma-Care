@@ -36,7 +36,7 @@ router.get('/favorites', auth, async (req, res) => {
         }
         
         const favorites = stats.medicineUsage
-            .sort((a, b) => b.count - a.count) // Sabse zyada count wale upar
+            .sort((a, b) => b.count - a.count) 
             .slice(0, 15) // Top 15
             .map(item => item.medicine);
             

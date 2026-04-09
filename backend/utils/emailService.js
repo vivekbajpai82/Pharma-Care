@@ -1,10 +1,8 @@
 require('dotenv').config();
 const brevo = require('@getbrevo/brevo');
 
-// Brevo API client setup helper
 const getBrevoClient = () => {
     const apiInstance = new brevo.TransactionalEmailsApi();
-    // V3 syntax: ['api-key'] ki jagah seedha .apiKey use hota hai
     apiInstance.authentications.apiKey.apiKey = process.env.BREVO_API_KEY;
     return apiInstance;
 };

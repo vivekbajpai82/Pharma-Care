@@ -21,7 +21,7 @@ const PrescriptionSchema = new Schema({
         gender: { type: String },
         weight: { type: String },
         bloodPressure: { type: String },
-        medication: { type: String }, // Medical Condition
+        medication: { type: String }, 
         additionalInstructions: { type: String },
         nextVisit: { type: Date }
     },

@@ -6,8 +6,6 @@ const User = require('../models/User');
 const DoctorStats = require('../models/DoctorStats');
 const { sendPrescriptionEmail } = require('../utils/emailService');
 
-// @route   POST /api/prescriptions
-// @desc    Save a new prescription and update doctor stats
 router.post('/', auth, async (req, res) => {
     try {
         const { patientDetails, medicines } = req.body;
