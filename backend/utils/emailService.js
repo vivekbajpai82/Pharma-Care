@@ -1,13 +1,11 @@
 require('dotenv').config();
-const { ApiClient, TransactionalEmailsApi, SendSmtpEmail, AccountApi } = require('@getbrevo/brevo');
+const brevo = require('@getbrevo/brevo');
 
-// Brevo API client setup
-const defaultClient = ApiClient.instance;
-defaultClient.authentications['api-key'].apiKey = process.env.BREVO_API_KEY;
-
+// Brevo API client setup helper
 const getBrevoClient = () => {
-    const apiInstance = new TransactionalEmailsApi();
-    apiInstance.authentications['api-key'].apiKey = process.env.BREVO_API_KEY;
+    const apiInstance = new brevo.TransactionalEmailsApi();
+    // V3 syntax: ['api-key'] ki jagah seedha .apiKey use hota hai
+    apiInstance.authentications.apiKey.apiKey = process.env.BREVO_API_KEY;
     return apiInstance;
 };
 
@@ -39,10 +37,10 @@ const processPDFBuffer = (pdfBuffer) => {
 // Send password reset email
 const sendResetPasswordEmail = async (userEmail, resetToken, userName) => {
     try {
-        const apiInstance = new TransactionalEmailsApi();
+        const apiInstance = getBrevoClient();
         const resetUrl = `${process.env.FRONTEND_URL || 'http://localhost:5173'}/reset-password/${resetToken}`;
 
-        const sendSmtpEmail = new SendSmtpEmail();
+        const sendSmtpEmail = new brevo.SendSmtpEmail();
         sendSmtpEmail.subject = 'Password Reset - Pharma Care';
         sendSmtpEmail.to = [{ email: userEmail, name: userName }];
         sendSmtpEmail.sender = { name: 'Pharma Care Support', email: process.env.EMAIL_USER };
@@ -96,7 +94,7 @@ const sendPrescriptionEmail = async (recipientEmail, recipientName, prescription
 
         const processedPDFBuffer = processPDFBuffer(pdfBuffer);
 
-        const sendSmtpEmail = new SendSmtpEmail();
+        const sendSmtpEmail = new brevo.SendSmtpEmail();
         sendSmtpEmail.subject = `Medical Prescription for ${patientDetails.name} - Pharma Care`;
         sendSmtpEmail.to = [{ email: recipientEmail, name: recipientName || 'Patient' }];
         sendSmtpEmail.sender = { name: `Pharma Care - Dr. ${doctorInfo.name}`, email: process.env.EMAIL_USER };
@@ -168,7 +166,7 @@ const sendWelcomeEmail = async (userEmail, userName) => {
     try {
         const apiInstance = getBrevoClient();
 
-        const sendSmtpEmail = new SendSmtpEmail();
+        const sendSmtpEmail = new brevo.SendSmtpEmail();
         sendSmtpEmail.subject = 'Welcome to Pharma Care!';
         sendSmtpEmail.to = [{ email: userEmail, name: userName }];
         sendSmtpEmail.sender = { name: 'Pharma Care Team', email: process.env.EMAIL_USER };
@@ -216,8 +214,9 @@ const sendWelcomeEmail = async (userEmail, userName) => {
 // Test connection
 const testEmailConnection = async () => {
     try {
-        const accountApi = new AccountApi();
-        accountApi.authentications['api-key'].apiKey = process.env.BREVO_API_KEY;
+        const accountApi = new brevo.AccountApi();
+        // Setup API key correctly for AccountApi 
+        accountApi.authentications.apiKey.apiKey = process.env.BREVO_API_KEY;
         await accountApi.getAccount();
         console.log('✅ Brevo email service is ready');
         return true;
