@@ -1,5 +1,5 @@
-const SibApiV3Sdk = require('@getbrevo/brevo');
-const defaultClient = SibApiV3Sdk.ApiClient.instance;
+const Brevo = require('@getbrevo/brevo');
+const defaultClient = Brevo.ApiClient.instance;
 defaultClient.authentications['api-key'].apiKey = process.env.BREVO_API_KEY;
 require('dotenv').config();
 
@@ -38,10 +38,10 @@ const processPDFBuffer = (pdfBuffer) => {
 // Send password reset email
 const sendResetPasswordEmail = async (userEmail, resetToken, userName) => {
     try {
-        const apiInstance = new SibApiV3Sdk.TransactionalEmailsApi();
+        const apiInstance = new Brevo.TransactionalEmailsApi();
         const resetUrl = `${process.env.FRONTEND_URL || 'http://localhost:5173'}/reset-password/${resetToken}`;
 
-        const sendSmtpEmail = new SibApiV3Sdk.SendSmtpEmail();
+        const sendSmtpEmail = new Brevo.SendSmtpEmail();
         sendSmtpEmail.subject = 'Password Reset - Pharma Care';
         sendSmtpEmail.to = [{ email: userEmail, name: userName }];
         sendSmtpEmail.sender = { name: 'Pharma Care Support', email: process.env.EMAIL_USER };
