@@ -7,9 +7,25 @@ connectDB();
 
 const app = express();
 
-// CORS Configuration
+// CORS Configuration - multiple origins allow
+const allowedOrigins = [
+  "http://localhost:5173",
+  "http://localhost:3000",
+  process.env.FRONTEND_URL  // Netlify URL from .env
+].filter(Boolean);
+
 app.use(cors({
-  origin: process.env.FRONTEND_URL || "http://localhost:5173",
+  origin: function(origin, callback) {
+    // Postman/curl ke liye (no origin)
+    if (!origin) return callback(null, true);
+
+    if (allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      console.warn('CORS blocked for origin:', origin);
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization', 'x-auth-token']
@@ -21,7 +37,9 @@ app.use(express.urlencoded({ limit: '50mb', extended: true }));
 
 // Request timeout
 app.use((req, res, next) => {
-  req.setTimeout(60000);
+  req.setTimeout(60000, () => {
+    res.status(408).json({ success: false, message: 'Request timeout' });
+  });
   res.setTimeout(60000);
   next();
 });
@@ -62,6 +80,9 @@ app.use((req, res) => {
 app.use((error, req, res, next) => {
   console.error('Server Error:', error);
 
+  if (error.message === 'Not allowed by CORS') {
+    return res.status(403).json({ success: false, message: 'CORS policy violation' });
+  }
   if (error.type === 'entity.too.large') {
     return res.status(413).json({ success: false, message: 'Payload too large' });
   }
@@ -94,5 +115,5 @@ const PORT = process.env.PORT || 5000;
 app.listen(PORT, '0.0.0.0', () => {
   console.log(`Server started on PORT ${PORT}`);
   console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
-  console.log(`Frontend URL: ${process.env.FRONTEND_URL || 'http://localhost:5173'}`);
+  console.log(`Allowed Origins: ${allowedOrigins.join(', ')}`);
 });
